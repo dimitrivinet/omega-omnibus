@@ -1,4 +1,4 @@
-name: Lint
+name: Lint and Test
 
 on:
   pull_request: {}
@@ -25,3 +25,18 @@ jobs:
       - run: python -m flake8
       - run: python -m mypy omega_omnibus/
       - run: pylint --rcfile=.pylintrc omega_omnibus/
+
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.10.2
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - run: python -m pytest
