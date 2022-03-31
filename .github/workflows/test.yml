@@ -1,0 +1,29 @@
+name: Test
+
+on:
+  pull_request: {}
+  push:
+    branches:
+    - main
+    tags:
+    - "*"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.10
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-dev.txt
+      - run: python -m isort --recursive --diff .
+      - run: python -m black --check .
+      - run: python -m flake8
+      - run: python -m mypy
+      - run: coverage run -m pytest --cov --cov-fail-under=100
