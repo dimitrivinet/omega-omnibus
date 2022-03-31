@@ -23,5 +23,5 @@ jobs:
       - run: python -m isort --recursive --diff .
       - run: python -m black --check .
       - run: python -m flake8
-      - run: python -m mypy
+      - run: python -m mypy omega_omnibus/
       - run: pylint --rcfile=.pylintrc omega_omnibus/
