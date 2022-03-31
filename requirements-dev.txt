@@ -1,2 +1,7 @@
-fastapi
+black
+coverage
+flake8
+isort
+mypy
 pre-commit
+pytest
