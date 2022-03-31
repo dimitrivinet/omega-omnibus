@@ -20,8 +20,8 @@ jobs:
           python-version: 3.10.2
 
       - run: pip3 install -r requirements-dev.txt
-      - run: python -m isort --recursive --diff .
-      - run: python -m black --check .
+      - run: python -m isort --recursive --diff omega_omnibus/
+      - run: python -m black --check omega_omnibus/
       - run: python -m flake8
       - run: python -m mypy omega_omnibus/
       - run: pylint --rcfile=.pylintrc omega_omnibus/
