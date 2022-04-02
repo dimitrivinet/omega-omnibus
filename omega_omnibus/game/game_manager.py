@@ -21,7 +21,7 @@ Player dict tempalte:
 
 # from omega_omnibus.game import game_round
 
-ROUND_ORDER = list(range(12, 1, -1)) + list(range(1, 13))
+ROUND_ORDER = list(range(1, 12)) + list(range(12, 0, -1))
 
 
 class GameManager:
