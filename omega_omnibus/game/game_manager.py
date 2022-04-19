@@ -160,7 +160,6 @@ class GameManager:
             )
 
         self.player_order = list(self.players.keys())
-        print(first_player)
         while self.player_order[0] != first_player:
             self._rotate_player_order()
 

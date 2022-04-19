@@ -11,6 +11,21 @@ class Card:
     suit: Suit
     rank: Rank
 
+    @classmethod
+    def from_string(cls, card_str: str):
+        """Create card from its string representation (ex: 'two of clubs')."""
+
+        card_str = card_str.upper()
+
+        try:
+            rank_str, suit_str = card_str.split(" OF ")
+            return cls(Suit[suit_str], Rank[rank_str])
+        except Exception as e:
+            raise ValueError("Failed to create card from provided string.") from e
+
+    def __repr__(self):
+        return f"{self.rank.name.title()} of {self.suit.name.title()}"
+
 
 class Suit(Enum):
     """Enum of a card suit."""

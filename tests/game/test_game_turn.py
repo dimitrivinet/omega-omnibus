@@ -15,7 +15,7 @@ def random_card():
     """Create a random card."""
 
     suit = Suit(random.randint(1, 4))
-    rank = Rank(random.randint(1, 13))
+    rank = Rank(random.randint(2, 14))
 
     return Card(suit, rank)
 
@@ -37,10 +37,6 @@ def test_invalid_num_players():
     # num_players at 1
     with pytest.raises(ValueError):
         _ = Turn(num_players=1)
-
-    # invalid num_players type
-    with pytest.raises(TypeError):
-        _ = Turn(num_players="3")
 
 
 def test_set_trump():
@@ -71,8 +67,11 @@ def test_add_card():
 
     card = random_card()
     r.add_card(BASE_PLAYER_ID, card)
+    card_score = r.card_score(card)
 
-    assert r._dict == {BASE_PLAYER_ID: card}  # pylint: disable = protected-access
+    assert r._dict == {
+        BASE_PLAYER_ID: (card, card_score)
+    }  # pylint: disable = protected-access
 
 
 def test_add_card_wrong_type():
@@ -92,10 +91,21 @@ def test_add_card_before_trump():
 
 def test_add_card_same_player():
     r = Turn(num_players=3)
+    r.set_trump(random_card())
     r.add_card(BASE_PLAYER_ID, random_card())
 
     with pytest.raises(RuntimeError):
         r.add_card(BASE_PLAYER_ID, random_card())
+
+
+def test_add_card_sets_target():
+    r = Turn(num_players=3)
+    r.set_trump(random_card())
+
+    card = random_card()
+    r.add_card(BASE_PLAYER_ID, card)
+
+    assert r.target_suit == card.suit
 
 
 def test_calculate_score():
@@ -145,6 +155,17 @@ def test_calculate_score():
 
     assert r4.calculate_score() == f"{BASE_PLAYER_ID}2"
 
+    # no winner
+    r4 = Turn(num_players=4)
+    r4.set_trump(Card(Suit.CLUBS, Rank.TEN))
+
+    r4.add_card(f"{BASE_PLAYER_ID}1", Card(Suit.HEARTS, Rank.ACE))  # omnibus 1
+    r4.add_card(f"{BASE_PLAYER_ID}3", Card(Suit.HEARTS, Rank.ACE))  # omnibus 1
+    r4.add_card(f"{BASE_PLAYER_ID}4", Card(Suit.HEARTS, Rank.QUEEN))  # omnibus 2
+    r4.add_card(f"{BASE_PLAYER_ID}5", Card(Suit.HEARTS, Rank.QUEEN))  # omnibus 2
+
+    assert r4.calculate_score() is None
+
 
 def test_calculate_score_error():
     r = Turn(num_players=3)
@@ -152,6 +173,8 @@ def test_calculate_score_error():
     # trump card not set
     with pytest.raises(RuntimeError):
         r.calculate_score()
+
+    r.set_trump(random_card())
 
     # not all players have played
     r.add_card(f"{BASE_PLAYER_ID}", random_card())

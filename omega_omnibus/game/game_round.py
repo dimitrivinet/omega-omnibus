@@ -30,3 +30,5 @@ class Round:
 
         # ! TODO
         return False
+
+    # ! TODO: repr
