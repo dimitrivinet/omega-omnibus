@@ -69,9 +69,8 @@ def test_add_card():
     r.add_card(BASE_PLAYER_ID, card)
     card_score = r.card_score(card)
 
-    assert r._dict == {
-        BASE_PLAYER_ID: (card, card_score)
-    }  # pylint: disable = protected-access
+    # pylint: disable = protected-access
+    assert r._dict == {BASE_PLAYER_ID: (card, card_score)}
 
 
 def test_add_card_wrong_type():
