@@ -62,7 +62,7 @@ class Turn:
     def calculate_score(self) -> Optional[str]:
         """Calculates turn score and returns winning player ID."""
 
-        if not self.round_over:
+        if not self.over:
             raise RuntimeError("Turn is not over, score cannot be calculated.")
 
         cards_scores = [card[1] for card in self._dict.values()]
@@ -81,7 +81,7 @@ class Turn:
         return None
 
     @property
-    def round_over(self) -> bool:
+    def over(self) -> bool:
         """Checks if everything was set properly for calculating score."""
 
         return hasattr(self, "trump") and len(self._dict.keys()) == self.num_players
@@ -101,3 +101,38 @@ class Turn:
 
         # if card doesn't follow any suit
         return card_score
+
+
+if __name__ == "__main__":  # pragma: no cover
+    print("creating test turn 1")
+    t1 = Turn(4)
+
+    print("setting trump")
+    t1.set_trump(Card.from_string("two of clubs"))
+
+    print("adding cards")
+    t1.add_card("1", Card.from_string("ten of hearts"))
+    t1.add_card("2", Card.from_string("queen of hearts"))
+    t1.add_card("3", Card.from_string("king of hearts"))  # omnibus
+    t1.add_card("4", Card.from_string("king of hearts"))  # omnibus
+
+    print("checking result")
+    assert t1.calculate_score() == "2"
+    print("all ok!")
+
+    print("-" * 10)
+    print("creating test turn 2")
+    t2 = Turn(4)
+
+    print("setting trump")
+    t2.set_trump(Card.from_string("two of clubs"))
+
+    print("adding cards")
+    t2.add_card("1", Card.from_string("ten of hearts"))
+    t2.add_card("2", Card.from_string("queen of hearts"))
+    t2.add_card("3", Card.from_string("king of hearts"))
+    t2.add_card("4", Card.from_string("two of clubs"))  # trump card
+
+    print("checking result")
+    assert t2.calculate_score() == "4"
+    print("all ok!")

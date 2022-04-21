@@ -78,6 +78,7 @@ class GameManager:
     rounds: List[game_round.Round]
     current_round_index: int
     game_started: bool
+    _players_frozen: bool
 
     player_order: list
 
@@ -86,16 +87,17 @@ class GameManager:
         self.rounds = []
         self.current_round_index = -1
         self.game_started = False
+        self._players_frozen = False
 
     def add_player(self, name):
         """Add player to game. Generates uuid corresponding to player.
         New players can't be added after game has started with start_game()."""
 
-        if self.game_started:
+        if self._players_frozen:
             raise RuntimeError(
                 " ".join(
                     (
-                        "A player cannot be added while the game is running.",
+                        "A player cannot be added after players were frozen.",
                         f"(tried to add player {repr(name)})",
                     )
                 )
@@ -106,7 +108,17 @@ class GameManager:
 
         return new_player.id
 
-    def _create_current_round(self, first_player: str):
+    def freeze_players(self):
+        """Freeze player order and ids."""
+
+        if len(self.players) < 2:
+            raise RuntimeError("Cannot play with less than 2 players.")
+
+        self._players_frozen = True
+
+        self.player_order = list(self.players.keys()).copy()
+
+    def _create_current_round(self):
         """Create current round."""
 
         if len(self.rounds) != self.current_round_index:  # if round already exists
@@ -114,8 +126,7 @@ class GameManager:
 
         new_round = game_round.Round(
             num_turns=ROUND_ORDER[self.current_round_index],
-            player_ids=list(self.players.keys()),
-            first_player=first_player,
+            player_order=self.player_order,
         )
         self.rounds.append(new_round)
 
@@ -138,8 +149,8 @@ class GameManager:
         if self.game_started:
             raise RuntimeError("Game already started.")
 
-        if len(self.players) < 2:
-            raise RuntimeError("Cannot play with less than 2 players.")
+        if not self._players_frozen:
+            raise RuntimeError("Players must be frozen before starting game.")
 
         fpc = FPC.to_enum(first_player_choice)
 
@@ -165,7 +176,7 @@ class GameManager:
 
         self.game_started = True
         self.current_round_index = 0
-        self._create_current_round(first_player=first_player)
+        self._create_current_round()
 
     def next_round(self):
         """Creates next round. Game must be started with start_game().
@@ -174,13 +185,23 @@ class GameManager:
         if not self.game_started:
             raise RuntimeError("Game is not started!")
 
+        if self.over:
+            return self.over
+
         if not self.rounds[self.current_round_index].over:
             raise RuntimeError("Current round is not over!")
 
         self.current_round_index += 1
 
         self._rotate_player_order()
-        self._create_current_round(self.player_order[0])
+        self._create_current_round()
+
+        return self.over
+
+    def next_turn(self):
+        """Go to next turn."""
+
+        self.rounds[self.current_round_index].next_turn()
 
     def set_trump(self, trump: cards.Card):
         """Set trump card for the current turn."""
@@ -192,7 +213,14 @@ class GameManager:
 
         self.rounds[self.current_round_index].add_card(card)
 
-    def calculate_scores(self):
+    def calculate_score(self):
         """Calculates current round scores and updates player scores."""
 
+        if not self.rounds[self.current_round_index].over:
+            self.rounds[self.current_round_index].calculate_score()
+
         # scores = self.rounds[self.current_round_index].calculate_scores()
+
+    @property
+    def over(self):
+        return len(self.rounds) == 23 and all(r.over for r in self.rounds)
