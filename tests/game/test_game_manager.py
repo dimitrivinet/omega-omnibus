@@ -54,6 +54,8 @@ def test_add_player():
 
 
 def test_freeze_players():
+    # pylint: disable = protected-access
+
     m = GameManager()
     id1 = m.add_player("1")
 
