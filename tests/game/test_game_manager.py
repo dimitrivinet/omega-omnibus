@@ -1,8 +1,20 @@
+# pylint: disable = missing-function-docstring
 import copy
+import random
 
 import pytest
 
+from omega_omnibus.game.cards import Card, Rank, Suit
 from omega_omnibus.game.game_manager import FPC, GameManager
+
+
+def random_card():
+    """Create a random card."""
+
+    suit = Suit(random.randint(1, 4))
+    rank = Rank(random.randint(2, 14))
+
+    return Card(suit, rank)
 
 
 def test_fpc():
@@ -16,57 +28,72 @@ def test_fpc():
 
 
 def test_create_manager():
-    """Test basic creation and default values."""
+    # pylint: disable = protected-access
 
     m = GameManager()
     assert m.players == {}
     assert m.rounds == []
     assert m.current_round_index == -1
     assert m.game_started is False
+    assert m._players_frozen is False
+
+    assert hasattr(m, "player_order") is False
 
 
 def test_add_player():
-    """Test adding players."""
-
     m = GameManager()
     m.add_player("1")
     assert len(m.players) == 1
     m.add_player("2")
     assert len(m.players) == 2
 
+    m.freeze_players()
     m.start_game(first_player_choice="FIRST_ADDED")
     with pytest.raises(RuntimeError):
         m.add_player("3")
 
 
+def test_freeze_players():
+    m = GameManager()
+    id1 = m.add_player("1")
+
+    with pytest.raises(RuntimeError):
+        m.freeze_players()
+
+    id2 = m.add_player("2")
+    m.freeze_players()
+
+    assert m._players_frozen is True
+    assert hasattr(m, "player_order") is True
+    assert m.player_order == [id1, id2]
+
+
 def test_create_current_round():
-    """Test round creation."""
     # pylint: disable = protected-access
 
     m = GameManager()
     m.add_player("1")
     m.add_player("2")
     m.add_player("3")
+    m.freeze_players()
 
     m.current_round_index = -3
     with pytest.raises(RuntimeError):
-        m._create_current_round(first_player="dummy_1")
+        m._create_current_round()
 
     m.current_round_index = 0
-    m._create_current_round(first_player="dummy_1")
+    m._create_current_round()
     assert len(m.rounds) == 1
 
     m.current_round_index += 1
-    m._create_current_round(first_player="dummy_1")
+    m._create_current_round()
     assert len(m.rounds) == 2
 
     with pytest.raises(RuntimeError):
-        m._create_current_round(first_player="dummy_1")
+        m._create_current_round()
 
 
 def test_rotate_player_order():
-    """Test player order rotation."""
-
     m = GameManager()
     m.add_player("1")
     m.add_player("2")
@@ -74,6 +101,7 @@ def test_rotate_player_order():
 
     m._rotate_player_order()
 
+    m.freeze_players()
     m.start_game()  # create player order list
     base_order = m.player_order.copy()
 
@@ -91,21 +119,16 @@ def test_rotate_player_order():
 
 
 def test_start_game():
-    """Test game start function."""
-
     m = GameManager()
 
     with pytest.raises(RuntimeError) as excinfo:
         m.start_game()
-        assert "Cannot play with less than 2 players." in excinfo.value
+        assert "Players must be frozen before starting game." in excinfo.value
 
     id1 = m.add_player("1")
-    with pytest.raises(RuntimeError) as excinfo:
-        m.start_game()
-        assert "Cannot play with less than 2 players." in excinfo.value
-
     id2 = m.add_player("2")
     id3 = m.add_player("3")
+    m.freeze_players()
 
     m1 = copy.deepcopy(m)
     m2 = copy.deepcopy(m)
@@ -151,17 +174,39 @@ def test_next_round():
     m.add_player("2")
     m.add_player("3")
 
+    m.freeze_players()
     m.start_game()
 
     with pytest.raises(RuntimeError) as excinfo:
         m.next_round()
         assert "Current round is not over!" in excinfo.value
 
-    # ! TODO: next_round when round is over:
+    m.set_trump(random_card())
+    m.add_card(random_card())
+    m.add_card(random_card())
+    m.add_card(random_card())
+    m.calculate_score()
 
-    # old_round_len = len(m.rounds)
-    # old_round_index = m.current_round_index
-    # m.next_round()
+    old_round_len = len(m.rounds)
+    old_round_index = m.current_round_index
+    ret = m.next_round()
 
-    # assert len(m.rounds) == old_round_len + 1
-    # assert m.current_round_index == old_round_index + 1
+    assert len(m.rounds) == old_round_len + 1
+    assert m.current_round_index == old_round_index + 1
+    assert ret is False
+
+    while not m.over:
+        m.set_trump(random_card())
+        m.add_card(random_card())
+        m.add_card(random_card())
+        m.add_card(random_card())
+
+        if not m.rounds[m.current_round_index].over:
+            m.calculate_score()
+            m.next_turn()
+        else:
+            m.calculate_score()
+            m.next_round()
+
+    ret = m.next_round()
+    assert ret is True
