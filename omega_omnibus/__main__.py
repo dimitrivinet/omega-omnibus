@@ -1,6 +1,6 @@
-from omega_omnibus.game.game_manager import GameManager
+from omega_omnibus.game.game_manager import GameManager  # pragma: no cover
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     m = GameManager()
 
     while True:
