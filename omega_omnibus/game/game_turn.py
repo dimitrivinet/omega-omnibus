@@ -65,17 +65,17 @@ class Turn:
         if not self.over:
             raise RuntimeError("Turn is not over, score cannot be calculated.")
 
-        cards_scores = [card[1] for card in self._dict.values()]
-        cards_scores_copy = cards_scores.copy()
+        cards = list(self._dict.values())
+        cards_copy = cards.copy()
 
         # remove scores that appear twice (omnibus)
-        cards_scores = list(
-            filter(lambda x: cards_scores_copy.count(x) < 2, cards_scores)
+        cards = list(
+            filter(lambda x: cards_copy.count(x) == 1, cards)
         )
-        winner_score = max(cards_scores, default=0)
+        winner_card = max(cards, default=0, key=lambda x: x[1])
 
         for player, played_card in self._dict.items():
-            if played_card[1] == winner_score:
+            if played_card == winner_card:
                 return player
 
         return None
@@ -135,4 +135,22 @@ if __name__ == "__main__":  # pragma: no cover
 
     print("checking result")
     assert t2.calculate_score() == "4"
+    print("all ok!")
+
+    print("creating test turn 3")
+    t3 = Turn(5)
+
+    print("setting trump")
+    t3.set_trump(Card.from_string("two of clubs"))
+
+    print("adding cards")
+    t3.add_card("1", Card.from_string("ten of hearts"))
+    t3.add_card("2", Card.from_string("ten of hearts"))
+    t3.add_card("3", Card.from_string("king of diamonds"))  # omnibus
+    t3.add_card("4", Card.from_string("king of diamonds"))  # omnibus
+    t3.add_card("5", Card.from_string("king of spades"))  # omnibus
+
+    print("checking result")
+
+    assert t3.calculate_score() == "5"
     print("all ok!")
