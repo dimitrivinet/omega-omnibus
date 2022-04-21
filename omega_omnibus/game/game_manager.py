@@ -21,6 +21,11 @@ Player dict tempalte:
 
 # from omega_omnibus.game import game_round
 
+from curses import keyname
+from typing_extensions import Self
+from omega_omnibus.game.game_round import Round
+
+
 ROUND_ORDER = list(range(1, 12)) + list(range(12, 0, -1))
 
 
@@ -43,15 +48,21 @@ class GameManager:
         self.current_round_index = 0
         self.game_started = False
 
-    def add_player(self, name):
+    def add_player(self):
         """Add player to game. Generates uuid corresponding to player.
         New players can't be added after game has started with start_game()."""
+        if self.game_started is True:
+            print("Error, game has already started")
+        else:
+            self.players['NewPlayer'] = 'Score'
 
     def start_game(self):
         """Starts game."""
+        self.game_started = True
 
     def next_round(self):
         """Creates next round. Game must be started with start_game()."""
+        self.rounds.append(Round(ROUND_ORDER[self.current_round_index]))
 
     def set_trump(self):
         """Set trump card for the current round."""
@@ -61,3 +72,8 @@ class GameManager:
 
     def calculate_score(self):
         """Calculates current round score and updates scores."""
+
+    def ask_score(self):
+        """Allows checking the score mid-game."""
+        current_score = (f"{self.players.keys()} currently has {self.players.values()} points. ")
+        print(current_score)
