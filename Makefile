@@ -1,11 +1,11 @@
-clean: clean-coverage
+clean: clean-coverage clean-pytest clean-mypy clean-pycache
 
 coverage:
 	coverage run -m pytest
 
 clean-coverage:
-	rm -rf htmlcov
-	rm .coverage
+	- rm -rf htmlcov
+	- rm .coverage
 
 test: pytest-short
 
@@ -18,7 +18,7 @@ pytest-verbose:
 	python -m pytest --cov=omega_omnibus -v
 
 clean-pytest:
-	rm -rf .pytest_cache
+	- rm -rf .pytest_cache
 
 lint: isort black flake8 mypy pylint
 
@@ -39,8 +39,11 @@ mypy:
 	python -m mypy omega_omnibus/
 
 clean-mypy:
-	rm -rf .mypy-cache
+	- rm -rf .mypy_cache
 
 pylint:
 	@echo Running pylint
 	python -m pylint --rcfile=.pylintrc omega_omnibus/
+
+clean-pycache:
+	find . -type d -name  "__pycache__" -exec rm -r {} +
