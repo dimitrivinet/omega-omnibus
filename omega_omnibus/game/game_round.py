@@ -107,7 +107,7 @@ class Round:
 
     @property
     def over(self) -> bool:
-        """True if round is over, else False."""
+        """is round over."""
 
         return all(turn.over for turn in self.turns)
 

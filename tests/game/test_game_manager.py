@@ -94,6 +94,8 @@ def test_create_current_round():
 
 
 def test_rotate_player_order():
+    # pylint: disable = protected-access
+
     m = GameManager()
     m.add_player("1")
     m.add_player("2")

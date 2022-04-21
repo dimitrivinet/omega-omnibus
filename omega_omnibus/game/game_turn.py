@@ -82,7 +82,7 @@ class Turn:
 
     @property
     def over(self) -> bool:
-        """Checks if everything was set properly for calculating score."""
+        """Is turn over. Checks if everything was set properly for calculating score."""
 
         return hasattr(self, "trump") and len(self._dict.keys()) == self.num_players
 

@@ -223,4 +223,33 @@ class GameManager:
 
     @property
     def over(self):
+        """Is game over."""
+
         return len(self.rounds) == 23 and all(r.over for r in self.rounds)
+
+
+if __name__ == "__main__":  # pragma: no cover
+    m = GameManager()
+
+    while True:
+        ret = input("Type player name to add (type 'd' for default, 'q' to quit): ")
+        if ret == "q":
+            break
+
+        if ret in ["default", "d"]:
+            m.add_player("dimitri")
+            m.add_player("yann")
+            m.add_player("leah")
+            m.add_player("clement")
+            m.add_player("vincent")
+            break
+
+        m.add_player(ret)
+
+    print(f"Players: {', '.join([player.name for player in m.players.values()])}")
+
+    m.freeze_players()
+    m.start_game(first_player_choice="RANDOM")
+    print("Game started.")
+    print(m.rounds)
+    print([m.players[p_id].name for p_id in m.player_order])
