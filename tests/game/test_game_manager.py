@@ -7,6 +7,8 @@ import pytest
 from omega_omnibus.game.cards import Card, Rank, Suit
 from omega_omnibus.game.game_manager import FPC, GameManager
 
+random.seed(42)
+
 
 def random_card():
     """Create a random card."""
