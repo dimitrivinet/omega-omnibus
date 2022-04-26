@@ -1,3 +1,5 @@
+from typing import Callable
+
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from omega_omnibus.display.setup_page import SetupGamePage
@@ -8,24 +10,31 @@ from omega_omnibus.game.game_manager import GameManager
 class GlobalMenuBar(QtWidgets.QMenuBar):
     """Application generic menu bar."""
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        self.file_menu = self.addMenu("&File")
+        self.game_menu = self.addMenu("&Game")
 
-        button_action = QtGui.QAction("&Your button", self)
-        button_action.setStatusTip("This is your button")
-        button_action.setCheckable(True)
-        self.file_menu.addAction(button_action)
+        self.new_game = QtGui.QAction("&New game", self)
+        self.new_game.setStatusTip("Start a new game.")
+
+        self.game_menu.addAction(self.new_game)
+
+        self.new_game.triggered.connect(self.start_new_game)
+
+    def start_new_game(self):
+        """Start a new game."""
+
+        return self.parent().start_new_game()
 
 
 class MainWindow(QtWidgets.QMainWindow):
     """Main window of the program."""
 
-    def __init__(self, gm: GameManager):
+    def __init__(self):
         super().__init__()
 
-        self.gm = gm
+        self.gm = GameManager()
 
         self.setWindowTitle("Omega Omnibus")
         self.setMinimumSize(QtCore.QSize(680, 400))
@@ -33,22 +42,59 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menu_bar = GlobalMenuBar()
         self.setMenuBar(self.menu_bar)
 
-        self.welcome_page = WelcomePage()
-        # pylint: disable = no-member
-        self.welcome_page.start_button.clicked.connect(self.show_setup)
-        self.setCentralWidget(self.welcome_page)
-
         self.status_bar = QtWidgets.QStatusBar()
         self.setStatusBar(self.status_bar)
 
-        self.setup_page = SetupGamePage(self)
+        self.welcome_page = WelcomePage()
+        # pylint: disable = no-member
+        self.welcome_page.start_button.clicked.connect(self.show_new_setup)
+        self.setCentralWidget(self.welcome_page)
 
-    def show_setup(self):
+        self.setup_page = SetupGamePage()
+
+    def with_error(self, f: Callable):
+        def _with_error_decorator(*args, **kwargs):
+            try:
+                f(*args, **kwargs)
+            except Exception as e:  # pylint: disable = broad-except
+                err_box = QtWidgets.QMessageBox(self)
+                err_box.setIcon(QtWidgets.QMessageBox.Critical)
+                err_box.setText("An error has occured:" + " " * 20)
+                err_box.setInformativeText(str(e))
+                err_box.setStandardButtons(QtWidgets.QMessageBox.Close)
+                err_box.setDefaultButton(QtWidgets.QMessageBox.Close)
+                err_box.exec_()
+
+        return _with_error_decorator
+
+    def show_new_setup(self):
         """Go from welcome page to setup page."""
 
+        self.takeCentralWidget()
+        self.setup_page = SetupGamePage()
         self.setCentralWidget(self.setup_page)
         # pylint: disable = no-member
-        self.setup_page.start_game_button.clicked.connect(self.start_game)
+        self.setup_page.start_game_button.clicked.connect(
+            self.with_error(self.start_game)
+        )
+
+    def start_new_game(self):
+        msg_box = QtWidgets.QMessageBox(self)
+        msg_box.setText("A game is currently in progress.")
+        msg_box.setInformativeText(
+            "Any game data will be lost. Do you want to start a new game ?"
+        )
+        msg_box.setStandardButtons(
+            QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel
+        )
+        msg_box.setDefaultButton(QtWidgets.QMessageBox.Cancel)
+        ret = msg_box.exec_()
+
+        if ret == QtWidgets.QMessageBox.Cancel:
+            return
+
+        self.gm = GameManager()
+        self.show_new_setup()
 
     def start_game(self):
         """Add players and start the game."""

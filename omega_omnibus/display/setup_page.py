@@ -21,7 +21,8 @@ class SetupGamePage(QtWidgets.QWidget):
         """
         Second row
         """
-        self.add_player_textbox = QtWidgets.QLineEdit("Player name")
+        self.add_player_textbox = QtWidgets.QLineEdit()
+        self.add_player_textbox.setPlaceholderText("Player name (max 50 chars.)")
         self.add_player_textbox.setMaxLength(50)
 
         self.add_player_button = QtWidgets.QPushButton("Add player")
@@ -127,6 +128,9 @@ class SetupGamePage(QtWidgets.QWidget):
 
         to_remove = self.players_list.selectedIndexes()
 
+        if len(to_remove) == 0:
+            return
+
         update_first_player = False
 
         if to_remove[0].data(0) == self.players_list_model.item(0).data(0):
@@ -156,6 +160,10 @@ class SetupGamePage(QtWidgets.QWidget):
         """Set first player to selection."""
 
         to_set = self.players_list.selectedIndexes()
+
+        if len(to_set) == 0:
+            return
+
         self.first_player_val.setText(to_set[0].data(0))
         fpi = to_set[0].row()
         self.first_player = self.players_list_model.item(fpi)
