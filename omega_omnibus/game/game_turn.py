@@ -68,10 +68,13 @@ class Turn:
         cards = list(self._dict.values())
         cards_copy = cards.copy()
 
-        # remove scores that appear twice (omnibus)
-        cards = list(
-            filter(lambda x: cards_copy.count(x) == 1, cards)
-        )
+        # remove cards that appear twice (omnibus)
+        cards = list(filter(lambda x: cards_copy.count(x) == 1, cards))
+
+        # remove cards with same value
+        cards_scores = [card[1] for card in cards]
+        cards = list(filter(lambda x: cards_scores.count(x[1]) == 1, cards))
+
         winner_card = max(cards, default=0, key=lambda x: x[1])
 
         for player, played_card in self._dict.items():
@@ -144,11 +147,11 @@ if __name__ == "__main__":  # pragma: no cover
     t3.set_trump(Card.from_string("two of clubs"))
 
     print("adding cards")
-    t3.add_card("1", Card.from_string("ten of hearts"))
-    t3.add_card("2", Card.from_string("ten of hearts"))
+    t3.add_card("1", Card.from_string("ten of hearts"))  # omnibus
+    t3.add_card("2", Card.from_string("ten of hearts"))  # omnibus
     t3.add_card("3", Card.from_string("king of diamonds"))  # omnibus
     t3.add_card("4", Card.from_string("king of diamonds"))  # omnibus
-    t3.add_card("5", Card.from_string("king of spades"))  # omnibus
+    t3.add_card("5", Card.from_string("king of spades"))
 
     print("checking result")
 

@@ -150,7 +150,7 @@ def test_calculate_score():
     r4.add_card(f"{BASE_PLAYER_ID}3", Card(Suit.HEARTS, Rank.ACE))  # omnibus 1
     r4.add_card(f"{BASE_PLAYER_ID}4", Card(Suit.HEARTS, Rank.QUEEN))  # omnibus 2
     r4.add_card(f"{BASE_PLAYER_ID}5", Card(Suit.HEARTS, Rank.QUEEN))  # omnibus 2
-    r4.add_card(f"{BASE_PLAYER_ID}6", Card(Suit.HEARTS, Rank.THREE))  # omnibus 2
+    r4.add_card(f"{BASE_PLAYER_ID}6", Card(Suit.HEARTS, Rank.THREE))
 
     assert r4.calculate_score() == f"{BASE_PLAYER_ID}2"
 
@@ -163,7 +163,17 @@ def test_calculate_score():
     r4.add_card(f"{BASE_PLAYER_ID}4", Card(Suit.HEARTS, Rank.QUEEN))  # omnibus 2
     r4.add_card(f"{BASE_PLAYER_ID}5", Card(Suit.HEARTS, Rank.QUEEN))  # omnibus 2
 
-    assert r4.calculate_score() is None
+    # cards with same value
+    r5 = Turn(num_players=5)
+    r5.set_trump(Card(Suit.CLUBS, Rank.TEN))
+
+    r5.add_card(f"{BASE_PLAYER_ID}1", Card(Suit.CLUBS, Rank.ACE))  # omnibus 1
+    r5.add_card(f"{BASE_PLAYER_ID}2", Card(Suit.HEARTS, Rank.FOUR))  # draw
+    r5.add_card(f"{BASE_PLAYER_ID}3", Card(Suit.CLUBS, Rank.ACE))  # omnibus 1
+    r5.add_card(f"{BASE_PLAYER_ID}4", Card(Suit.DIAMONDS, Rank.FOUR))  # draw
+    r5.add_card(f"{BASE_PLAYER_ID}5", Card(Suit.SPADES, Rank.FOUR))  # draw
+
+    assert r5.calculate_score() is None
 
 
 def test_calculate_score_error():
