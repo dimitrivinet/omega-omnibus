@@ -1,6 +1,24 @@
 PACKAGE_NAME=omega_omnibus
 
+########## GLOBAL ##########
+.PHONY: clean clean-pycache
+
 clean: clean-coverage clean-pytest clean-mypy clean-pycache
+
+clean-pycache:
+	find . -type d -name  "__pycache__" -exec rm -r {} +
+
+########## SERVER ##########
+.PHONY: server server-dev
+
+server:
+	uvicorn omega_omnibus:app
+
+server-dev:
+	uvicorn omega_omnibus:app --reload
+
+########## TESTING ##########
+.PHONY: coverage clean-coverage test pytest-short pytest-verbose clean-pytest
 
 coverage:
 	coverage run -m pytest
@@ -21,6 +39,9 @@ pytest-verbose:
 
 clean-pytest:
 	- rm -rf .pytest_cache
+
+########## LINTING ##########
+.PHONY: lint isort black flake8 mypy clean-mypy pylint
 
 lint: isort black flake8 mypy pylint
 
@@ -46,6 +67,3 @@ clean-mypy:
 pylint:
 	@echo Running pylint
 	python -m pylint --rcfile=.pylintrc ${PACKAGE_NAME}/
-
-clean-pycache:
-	find . -type d -name  "__pycache__" -exec rm -r {} +
