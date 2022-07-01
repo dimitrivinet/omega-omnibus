@@ -1,0 +1,4 @@
+fastapi
+PySide6
+python-decouple
+uvicorn[standard]
