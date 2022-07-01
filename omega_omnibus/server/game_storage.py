@@ -28,7 +28,7 @@ class GameStorage:
         self.storage_path = storage_path
         self.max_size = max_size
 
-        self.games = deque(maxlen=max_size)
+        self.games = deque(maxlen=self.max_size)
 
     def load(self):
         """Loads games from file."""
@@ -36,8 +36,13 @@ class GameStorage:
         with open(self.storage_path, "rb") as f:
             games = pickle.load(f)
 
+            if not isinstance(games, deque):
+                games = deque(maxlen=self.max_size)
+
         for game in games:
             self.games.appendleft(game)
+
+        self.save()
 
     def save(self):
         """Saves games to file."""
