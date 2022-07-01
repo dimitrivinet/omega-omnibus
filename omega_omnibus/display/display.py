@@ -2,6 +2,7 @@ from typing import Callable
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
+from omega_omnibus.display.game_page import GamePage
 from omega_omnibus.display.setup_page import SetupGamePage
 from omega_omnibus.display.welcome_page import WelcomePage
 from omega_omnibus.game.game_manager import GameManager
@@ -20,16 +21,25 @@ class GlobalMenuBar(QtWidgets.QMenuBar):
 
         self.game_menu.addAction(self.new_game)
 
-        self.new_game.triggered.connect(self.start_new_game)
+        # pylint: disable = no-member
+        self.new_game.triggered.connect(self.setup_new_game)
 
-    def start_new_game(self):
+    def setup_new_game(self):
         """Start a new game."""
 
-        return self.parent().start_new_game()
+        return self.parent().setup_new_game()
 
 
 class MainWindow(QtWidgets.QMainWindow):
     """Main window of the program."""
+
+    gm: GameManager
+    menu_bar: QtWidgets.QMenuBar
+    status_bar: QtWidgets.QStatusBar
+
+    welcome_page: QtWidgets.QWidget
+    setup_page: QtWidgets.QWidget
+    game_page: QtWidgets.QWidget
 
     def __init__(self):
         super().__init__()
@@ -50,9 +60,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.welcome_page.start_button.clicked.connect(self.show_new_setup)
         self.setCentralWidget(self.welcome_page)
 
-        self.setup_page = SetupGamePage()
-
     def with_error(self, f: Callable):
+        """Execute function and show error in subwindow if exception occured."""
+
         def _with_error_decorator(*args, **kwargs):
             try:
                 f(*args, **kwargs)
@@ -78,7 +88,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.with_error(self.start_game)
         )
 
-    def start_new_game(self):
+    def show_game_start(self):
+        """Go from setup page to game page."""
+
+        print("player order:")
+        print([self.gm.players[pid].name for pid in self.gm.player_order])
+
+        self.takeCentralWidget()
+        self.game_page = GamePage()
+        self.setCentralWidget(self.game_page)
+
+    def setup_new_game(self):
         msg_box = QtWidgets.QMessageBox(self)
         msg_box.setText("A game is currently in progress.")
         msg_box.setInformativeText(
@@ -110,9 +130,7 @@ class MainWindow(QtWidgets.QMainWindow):
             args = {"first_player": fp, "first_player_choice": "MANUAL"}
 
         self.gm.start_game(**args)
-
-        print("player order:")
-        print([self.gm.players[pid].name for pid in self.gm.player_order])
+        self.show_game_start()
 
     def add_players(self):
         """Add players in the list to the game manager player list."""
