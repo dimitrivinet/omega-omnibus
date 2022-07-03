@@ -1,4 +1,5 @@
 fastapi
+fastapi-utils
 PySide6
 python-decouple
 uvicorn[standard]

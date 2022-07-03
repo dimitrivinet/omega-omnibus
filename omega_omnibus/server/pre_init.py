@@ -1,6 +1,7 @@
 import pickle
 
-from omega_omnibus.config import cfg
+from . import global_instances
+from .config import cfg
 
 
 def pre_init() -> None:
@@ -10,3 +11,6 @@ def pre_init() -> None:
     if not cfg.GAMES_STORAGE_PATH.exists():
         with open(cfg.GAMES_STORAGE_PATH, "wb") as f:
             pickle.dump([], f)
+
+    games_store = global_instances.games_store()
+    games_store.load()

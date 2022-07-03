@@ -1,23 +1,16 @@
 import pickle
 import uuid
 from collections import deque
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Deque, List
+from typing import Deque, List, Optional
 
 from omega_omnibus.game.game_manager import GameManager
 
-
-@dataclass
-class StoredGame:
-    """Representation of a game in storage."""
-
-    id: str
-    manager: GameManager
+from . import AlreadyExistsError, StoredGame
 
 
-class GameStorage:
-    """Storage manager for storing new and past games."""
+class PickleStorage:
+    """Storage manager using pickle."""
 
     storage_path: Path
     max_size: int
@@ -31,7 +24,7 @@ class GameStorage:
         self.games = deque(maxlen=self.max_size)
 
     def load(self):
-        """Loads games from file."""
+        """Load games from file."""
 
         with open(self.storage_path, "rb") as f:
             games = pickle.load(f)
@@ -74,7 +67,9 @@ class GameStorage:
 
         raise KeyError(f"Game {key} not found.")
 
-    def add_game(self, value: GameManager, on_full="delete") -> str:
+    def add_game(
+        self, value: GameManager, game_id: Optional[str] = None, on_full="delete"
+    ) -> str:
         """Add a new game and returns its created id.
 
         on_full (str): Action to take when game list is full.
@@ -85,7 +80,14 @@ class GameStorage:
         if len(self.games) == self.max_size and on_full == "error":
             raise RuntimeError("Game list is full.")
 
-        key = str(uuid.uuid4())
+        if game_id is None:
+            key = str(uuid.uuid4())
+        else:
+            if game_id in self:
+                raise AlreadyExistsError("game_id")
+
+            key = game_id
+
         self.games.appendleft(StoredGame(key, value))
 
         return key
@@ -96,6 +98,6 @@ class GameStorage:
         for game in self.games:
             if game.id == key:
                 self.games.remove(game)
-                break
+                return
 
         raise KeyError(f"Game {key} not found.")

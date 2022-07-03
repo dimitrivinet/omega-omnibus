@@ -1,6 +1,15 @@
-from omega_omnibus.config import cfg
+from functools import lru_cache
 
-from . import game_storage
+from .config import cfg
+from .game_storage import GameStorage, pickle_storage
 
-games_store = game_storage.GameStorage(cfg.GAMES_STORAGE_PATH, cfg.MAX_SAVED_GAMES)
-games_store.load()
+
+@lru_cache
+def games_store() -> GameStorage:
+    """Get the global game store. Returns the same instance every time."""
+
+    _games_store = pickle_storage.PickleStorage(
+        cfg.GAMES_STORAGE_PATH, cfg.MAX_SAVED_GAMES
+    )
+
+    return _games_store
