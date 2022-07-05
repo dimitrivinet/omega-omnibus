@@ -8,7 +8,7 @@ from omega_omnibus.game.game_manager import GameManager
 from ...game_storage import AlreadyExistsError
 from ...global_instances import games_store
 
-router = APIRouter()
+router = APIRouter(prefix="/games")
 
 
 class OnFullEnum(StrEnum):
@@ -18,18 +18,19 @@ class OnFullEnum(StrEnum):
     ERROR = "error"
 
 
-@router.get("/games")
+@router.get("/")
 async def get_game_ids() -> List[str]:
     """Get stored game ids."""
 
     return games_store().keys()
 
 
-@router.put("/games", status_code=status.HTTP_201_CREATED)
+@router.put("/", status_code=status.HTTP_201_CREATED)
 async def create_new_game(
     game_id: Optional[str] = None,
     on_full: OnFullEnum = OnFullEnum.DELETE,  # type: ignore
     # mypy throws error here ^ for no apparent reason
+    save: Optional[bool] = True,
 ) -> str:
     """Create game and return its id."""
 
@@ -49,13 +50,21 @@ async def create_new_game(
             status_code=status.HTTP_409_CONFLICT, detail="Already exists."
         ) from None
 
-    _games_store.save()
+    if save:
+        _games_store.save()
 
     return created_id
 
 
-@router.delete("/games")
-async def delete_game(game_id: str):
+@router.get("/{game_id}")
+async def get_game_info(game_id: str):
+    """Get game info."""
+
+    return games_store()[game_id].dict()
+
+
+@router.delete("/{game_id}")
+async def delete_game(game_id: str, save: Optional[bool] = True):
     """Delete game by id."""
 
     try:
@@ -65,8 +74,11 @@ async def delete_game(game_id: str):
             status_code=status.HTTP_404_NOT_FOUND, detail=f"No such game: {game_id}"
         ) from None
 
+    if save:
+        games_store().save()
 
-@router.post("/games/save")
+
+@router.post("/save")
 async def save_games():
     """Save games to storage."""
 
