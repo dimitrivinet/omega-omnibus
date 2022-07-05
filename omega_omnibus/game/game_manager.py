@@ -89,6 +89,16 @@ class GameManager:
         self.game_started = False
         self._players_frozen = False
 
+    def dict(self) -> dict:
+        """Get dict representation of the game manager."""
+
+        return {
+            "players": [f"{p.name} ({p.id})" for p in self.players.values()],
+            "rounds": self.rounds,
+            "current_round_index": self.current_round_index,
+            "game_started": self.game_started,
+        }
+
     def add_player(self, name):
         """Add player to game. Generates uuid corresponding to player.
         New players can't be added after game has started with start_game()."""
@@ -113,6 +123,9 @@ class GameManager:
 
         if len(self.players) < 2:
             raise RuntimeError("Cannot play with less than 2 players.")
+
+        if self._players_frozen:
+            raise RuntimeError("Players are already frozen.")
 
         self._players_frozen = True
 
