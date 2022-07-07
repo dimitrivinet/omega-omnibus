@@ -15,9 +15,15 @@ tags_metadata = [
 ]
 
 
-pre_init.pre_init()
 app = FastAPI(openapi_tags=tags_metadata)
 app.include_router(v1router.router)
+
+
+@app.on_event("startup")
+def startup():
+    """Steps to be performed before the server starts."""
+
+    pre_init.pre_init()
 
 
 @app.get("/")
