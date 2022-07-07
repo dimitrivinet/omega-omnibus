@@ -1,5 +1,5 @@
 fastapi
 fastapi-utils
+pydantic
 PySide6
-python-decouple
 uvicorn[standard]
