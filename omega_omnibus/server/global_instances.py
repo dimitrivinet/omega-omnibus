@@ -9,8 +9,14 @@ from .game_storage.game_storage import GameStorage
 def games_store() -> GameStorage:
     """Get the global game store. Returns the same instance every time."""
 
-    _games_store = pickle_storage.PickleStorage(
-        cfg.GAMES_STORAGE_PATH, cfg.MAX_SAVED_GAMES
-    )
+    _games_store: GameStorage
+    config = cfg()
+
+    if config.GAMES_STORAGE_TYPE == "pickle":
+        _games_store = pickle_storage.PickleStorage(
+            config.GAMES_STORAGE_PATH, config.MAX_SAVED_GAMES
+        )
+    else:
+        _games_store = GameStorage(config.MAX_SAVED_GAMES)
 
     return _games_store

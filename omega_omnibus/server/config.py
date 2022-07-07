@@ -1,26 +1,47 @@
-from dataclasses import dataclass
+# from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 
-from decouple import config  # type: ignore
+# from decouple import Choices, config  # type: ignore
+from pydantic import BaseSettings, validator
 
 
-@dataclass
-class Config:
-    """Command line configuration."""
+class Config(BaseSettings):
+    """Application configuration."""
 
-    # pylint: disable=invalid-name
+    # pylint: disable = no-self-use, no-self-argument
 
-    # Path to the game storage file.
-    # Absolute or relative to where you call the server.
-    GAMES_STORAGE_PATH: Path = config(
-        "OO_GAMES_STORAGE_PATH",
-        cast=lambda x: Path(x).resolve(),
-        default="games.pickle",
-    )
+    GAMES_STORAGE_TYPE: str = "memory"
+    GAMES_STORAGE_PATH: Path = Path("games.pickle")
+    MAX_SAVED_GAMES: int = 10
 
-    # Maximum number of games to store.
-    MAX_SAVED_GAMES: int = config("OO_MAX_SAVED_GAMES", cast=int, default=10)
+    @validator("GAMES_STORAGE_TYPE")
+    def must_be_valid_type(cls, v: str) -> str:
+        """Validate that the storage type is valid."""
+
+        valid_types = ["memory", "pickle"]
+
+        if v not in valid_types:
+            raise ValueError(
+                f"Invalid storage type: {v}. Must be one of: ({', '.join(valid_types)})"
+            )
+
+        return v
+
+    @validator("GAMES_STORAGE_PATH")
+    def resolve_path(cls, v: Path) -> Path:
+        """Resolve path."""
+
+        return v.resolve()
+
+    class Config:
+        """Inner config class for pydantic BaseSettings."""
+
+        env_prefix = "OO_"
 
 
-cfg = Config()
-print(cfg)
+@lru_cache
+def cfg() -> Config:
+    """Get the global configuration."""
+
+    return Config()
