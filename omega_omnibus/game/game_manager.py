@@ -243,6 +243,7 @@ class GameManager:
 
 if __name__ == "__main__":  # pragma: no cover
     m = GameManager()
+    print(m.dict())
 
     while True:
         ret = input("Type player name to add (type 'd' for default, 'q' to quit): ")

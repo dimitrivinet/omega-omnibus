@@ -99,6 +99,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(self.game_page)
 
     def setup_new_game(self):
+        """Start a new game."""
+
         msg_box = QtWidgets.QMessageBox(self)
         msg_box.setText("A game is currently in progress.")
         msg_box.setInformativeText(
