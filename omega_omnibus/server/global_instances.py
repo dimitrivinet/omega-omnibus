@@ -1,7 +1,8 @@
 from functools import lru_cache
 
 from .config import cfg
-from .game_storage import GameStorage, pickle_storage
+from .game_storage import pickle_storage
+from .game_storage.game_storage import GameStorage
 
 
 @lru_cache

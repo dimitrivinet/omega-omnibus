@@ -5,7 +5,7 @@ from fastapi_utils.enums import StrEnum
 
 from omega_omnibus.game.game_manager import GameManager
 
-from ...game_storage import AlreadyExistsError
+from ...game_storage.game_storage import AlreadyExistsError
 from ...global_instances import games_store
 
 router = APIRouter(prefix="/games")

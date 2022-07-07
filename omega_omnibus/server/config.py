@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from decouple import config
+from decouple import config  # type: ignore
 
 
 @dataclass

@@ -42,6 +42,23 @@ def test_create_manager():
     assert hasattr(m, "player_order") is False
 
 
+def test_to_dict():
+    m = GameManager()
+    d = m.dict()
+
+    assert list(d.keys()) == [
+        "players",
+        "rounds",
+        "current_round_index",
+        "game_started",
+    ]
+
+    assert d["players"] == []
+    assert len(d["rounds"]) == 0
+    assert d["current_round_index"] == -1
+    assert d["game_started"] is False
+
+
 def test_add_player():
     m = GameManager()
     m.add_player("1")
@@ -61,11 +78,16 @@ def test_freeze_players():
     m = GameManager()
     id1 = m.add_player("1")
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(RuntimeError) as excinfo:
         m.freeze_players()
+        assert "Cannot play with less than 2 players." in excinfo.value
 
     id2 = m.add_player("2")
     m.freeze_players()
+
+    with pytest.raises(RuntimeError) as excinfo:
+        m.freeze_players()
+        assert "Players are already frozen." in excinfo.value
 
     assert m._players_frozen is True
     assert hasattr(m, "player_order") is True

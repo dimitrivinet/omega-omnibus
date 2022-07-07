@@ -22,4 +22,6 @@ app.include_router(v1router.router)
 
 @app.get("/")
 async def root():
+    """Root dummy endpoint."""
+
     return {"message": "Hello World"}
