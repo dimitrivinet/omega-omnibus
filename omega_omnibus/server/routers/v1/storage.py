@@ -18,14 +18,14 @@ class OnFullEnum(StrEnum):
     ERROR = "error"
 
 
-@router.get("/")
+@router.get("")
 async def get_game_ids() -> List[str]:
     """Get stored game ids."""
 
     return games_store().keys()
 
 
-@router.put("/", status_code=status.HTTP_201_CREATED)
+@router.put("", status_code=status.HTTP_201_CREATED)
 async def create_new_game(
     game_id: Optional[str] = None,
     on_full: OnFullEnum = OnFullEnum.DELETE,  # type: ignore

@@ -76,10 +76,10 @@ class GameStorage:
         if game_id is None:
             key = str(uuid.uuid4())
         else:
-            if game_id in self:
-                raise AlreadyExistsError("game_id")
-
             key = game_id
+
+        if key in self:
+            raise AlreadyExistsError(f"{key}")
 
         self.games.appendleft(StoredGame(key, value))
 
