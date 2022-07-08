@@ -37,6 +37,8 @@ class Config(BaseSettings):
     class Config:
         """Inner config class for pydantic BaseSettings."""
 
+        env_file = ".env"
+        env_file_encoding = "utf-8"
         env_prefix = "OO_"
 
 
@@ -44,4 +46,7 @@ class Config(BaseSettings):
 def cfg() -> Config:
     """Get the global configuration."""
 
-    return Config()
+    config = Config()
+    print(config)
+
+    return config
