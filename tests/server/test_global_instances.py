@@ -1,4 +1,6 @@
-import os
+# pylint: disable = missing-function-docstring
+
+from pytest import MonkeyPatch
 
 from omega_omnibus.server.config import cfg
 from omega_omnibus.server.game_storage.game_storage import GameStorage
@@ -6,8 +8,8 @@ from omega_omnibus.server.game_storage.pickle_storage import PickleStorage
 from omega_omnibus.server.global_instances import games_store
 
 
-def test_memory_instance():
-    os.environ["OO_GAMES_STORAGE_TYPE"] = "memory"
+def test_memory_instance(monkeypatch: MonkeyPatch):
+    monkeypatch.setenv("OO_GAMES_STORAGE_TYPE", "memory")
 
     gs1 = games_store()
 
@@ -21,7 +23,7 @@ def test_memory_instance():
     cfg.cache_clear()
     games_store.cache_clear()
 
-    os.environ["OO_GAMES_STORAGE_TYPE"] = "pickle"
+    monkeypatch.setenv("OO_GAMES_STORAGE_TYPE", "pickle")
 
     gs3 = games_store()
 

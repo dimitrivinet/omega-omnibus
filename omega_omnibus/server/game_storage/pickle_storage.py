@@ -24,7 +24,10 @@ class PickleStorage(GameStorage):
         """Load games from file."""
 
         with open(self.storage_path, "rb") as f:
-            games = pickle.load(f)
+            try:
+                games = pickle.load(f)
+            except EOFError:
+                games = []
 
             if not isinstance(games, deque):
                 games: Deque[StoredGame] = deque(maxlen=self.max_size)

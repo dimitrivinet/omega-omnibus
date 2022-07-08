@@ -1,15 +1,15 @@
 # pylint: disable = missing-function-docstring
 
-import os
 from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
+from pytest import MonkeyPatch
 
 from omega_omnibus.server.config import Config, cfg
 
 
-def test_default_config():
+def test_default_config(_reset_lru_caches):
     c = Config()
 
     assert c.GAMES_STORAGE_TYPE == "memory"
@@ -30,10 +30,10 @@ def test_pickle_storage_config():
     assert c.MAX_SAVED_GAMES == 3
 
 
-def test_manual_envvars_config():
-    os.environ["OO_GAMES_STORAGE_TYPE"] = "memory"
-    os.environ["OO_GAMES_STORAGE_PATH"] = "games.pickle"
-    os.environ["OO_MAX_SAVED_GAMES"] = str(3)
+def test_manual_envvars_config(_reset_lru_caches, monkeypatch: MonkeyPatch):
+    monkeypatch.setenv("OO_GAMES_STORAGE_TYPE", "memory")
+    monkeypatch.setenv("OO_GAMES_STORAGE_PATH", "games.pickle")
+    monkeypatch.setenv("OO_MAX_SAVED_GAMES", str(3))
 
     config = cfg()
 

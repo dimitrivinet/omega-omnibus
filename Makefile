@@ -21,7 +21,10 @@ server-dev:
 	uvicorn omega_omnibus:app --reload
 
 ########## TESTING ##########
-.PHONY: coverage clean-coverage test pytest-short pytest-verbose clean-pytest
+.PHONY: pre-commit coverage clean-coverage test pytest-short pytest-verbose clean-pytest
+
+pre-commit:
+	pre-commit run --all-files
 
 coverage:
 	python -m pytest --cov=${PACKAGE_NAME}

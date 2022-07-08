@@ -1,3 +1,4 @@
+import urllib.parse
 from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException, status
@@ -37,6 +38,9 @@ async def create_new_game(
     new_game = GameManager()
     _games_store = games_store()
 
+    if game_id is not None:
+        game_id = urllib.parse.quote_plus(game_id)
+
     try:
         created_id = _games_store.add_game(
             new_game, game_id=game_id, on_full=on_full.value
@@ -60,7 +64,14 @@ async def create_new_game(
 async def get_game_info(game_id: str):
     """Get game info."""
 
-    return games_store()[game_id].dict()
+    try:
+        ret = games_store()[game_id].dict()
+    except KeyError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(e)
+        ) from None
+
+    return ret
 
 
 @router.delete("/{game_id}")
