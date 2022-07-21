@@ -3,24 +3,30 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'src/router.dart' as router;
-import 'package:google_fonts/google_fonts.dart';
+import 'package:frontend/src/game/cards.dart';
+import 'package:frontend/src/routes/root.dart';
+import 'package:frontend/src/theme.dart' as theme;
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
 
+  @override
+  // ignore: library_private_types_in_public_api
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        routes: router.getRoutes(),
-        theme: ThemeData(
-            primarySwatch: Colors.amber,
-            textTheme: GoogleFonts.solwayTextTheme(
-              Theme.of(context).textTheme,
-            )));
+      theme: theme.OOTheme.theme,
+      // home: const RootPage(),
+      home: Cards(),
+    );
+    // home: home.route(context),
   }
 }
