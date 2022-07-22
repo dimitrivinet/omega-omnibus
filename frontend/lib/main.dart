@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:frontend/src/game/cards.dart';
+import 'package:frontend/src/game/cards/cards.dart';
 import 'package:frontend/src/routes/root.dart';
 import 'package:frontend/src/theme.dart' as theme;
 
@@ -25,7 +25,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: theme.OOTheme.theme,
       // home: const RootPage(),
-      home: Cards(),
+      home: const Cards(),
     );
     // home: home.route(context),
   }
