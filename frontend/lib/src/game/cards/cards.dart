@@ -4,8 +4,11 @@ import 'package:frontend/src/game/cards/play.dart';
 import "dart:math";
 import "load.dart";
 
-const double cardWidth = 150.0;
+// typical card is 2.5" x 3.5" (64x89mm)
+const double cardAspectRatio = 64.0 / 89.0;
 const double cardHeight = 150.0;
+const double cardWidth = cardHeight * cardAspectRatio;
+
 const double playAreaWidth = 800.0;
 const double playAreaHeight = 800.0;
 
@@ -18,7 +21,7 @@ class Cards extends StatefulWidget {
 }
 
 class _CardsState extends State<Cards> {
-  final cards = getCardsSvg(height: cardHeight, width: cardWidth);
+  final cards = getCardsSvg(height: cardHeight);
   final cardsOnScreen = <Widget>[];
   final cardThumbsOnScreen = <SvgPicture>[];
   final maxCards = 12;
@@ -42,11 +45,12 @@ class _CardsState extends State<Cards> {
       //   child: randCard,
       // ),
       PlayedCard(
-          playAreaHeight: playAreaHeight,
-          cardHeight: cardHeight,
-          playAreaWidth: playAreaWidth,
-          cardWidth: cardWidth,
-          child: randCard),
+        playAreaHeight: playAreaHeight,
+        cardHeight: cardHeight,
+        playAreaWidth: playAreaWidth,
+        cardWidth: cardWidth,
+        child: randCard,
+      ),
     );
 
     cardThumbsOnScreen.add(randCard);

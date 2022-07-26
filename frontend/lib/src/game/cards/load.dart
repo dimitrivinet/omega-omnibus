@@ -1,5 +1,5 @@
 import "package:flutter_svg/flutter_svg.dart";
-import 'package:collection/collection.dart';
+import "package:collection/collection.dart";
 
 const List<String> suits = ["CLUB", "DIAMOND", "HEART", "SPADE"];
 const List<String> ranks = [
@@ -43,6 +43,12 @@ SvgPicture getCardSvg(String loc, String name,
   );
 }
 
+///
+/// Do not specify height or width to get default values.
+/// If height is specified, width will be calculated from it.
+/// If width is specified, height will be calculated from it.
+/// If both are specified, width will be calculated from height.
+///
 List<SvgPicture> getCardsSvg({double? height, double? width}) {
   List<SvgPicture> cards = <SvgPicture>[];
 
