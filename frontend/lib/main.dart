@@ -8,6 +8,8 @@ import 'package:frontend/src/game/cards/cards.dart';
 import 'package:frontend/src/routes/root.dart';
 import 'package:frontend/src/theme.dart' as theme;
 
+import "src/home.dart" as home;
+
 void main() {
   runApp(const MyApp());
 }
@@ -26,7 +28,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: theme.OOTheme.theme,
       // home: const RootPage(),
-      home: const Cards(),
+      // home: const Cards(),
+      home: const home.OOHome(),
     );
     // home: home.route(context),
   }
