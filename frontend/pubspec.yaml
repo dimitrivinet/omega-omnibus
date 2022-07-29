@@ -89,6 +89,18 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+  fonts:
+    - family: AtkinsonHyperlegible
+      fonts:
+        - asset: fonts/Atkinson-Hyperlegible/Atkinson-Hyperlegible-Bold-102.ttf
+          weight: 700
+        - asset: fonts/Atkinson-Hyperlegible/Atkinson-Hyperlegible-BoldItalic-102.ttf
+          style: italic
+          weight: 700
+        - asset: fonts/Atkinson-Hyperlegible/Atkinson-Hyperlegible-Italic-102.ttf
+          style: italic
+        - asset: fonts/Atkinson-Hyperlegible/Atkinson-Hyperlegible-Regular-102.ttf
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
