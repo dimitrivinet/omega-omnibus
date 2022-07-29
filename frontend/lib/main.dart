@@ -4,11 +4,14 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/src/components/info_page.dart';
 import 'package:frontend/src/game/cards/cards.dart';
 import 'package:frontend/src/routes/root.dart';
 import 'package:frontend/src/theme.dart' as theme;
 
-import "src/home.dart" as home;
+import "src/pages/home.dart" as home;
+import "src/pages/about.dart" as about;
+import "src/pages/contact.dart" as contact;
 
 void main() {
   runApp(const MyApp());
@@ -26,10 +29,14 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: theme.OOTheme.theme,
-      // home: const RootPage(),
-      // home: const Cards(),
-      home: const home.OOHome(),
+      routes: {
+        "/": (context) => const home.OOHome(),
+        "/new_game": (context) => OOInfoPage("New Game", child: Container()),
+        "/history": (context) => OOInfoPage("History", child: Container()),
+        "/stats": (context) => OOInfoPage("Stats", child: Container()),
+        "/about": (context) => const about.OOAbout(),
+        "/contact": (context) => const contact.OOContact(),
+      },
     );
     // home: home.route(context),
   }
