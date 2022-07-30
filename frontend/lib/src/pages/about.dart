@@ -1,7 +1,9 @@
 import "package:flutter/material.dart";
-import 'package:frontend/src/components/info_page.dart';
-import 'package:frontend/src/components/text.dart';
+
 import 'package:url_launcher/url_launcher.dart';
+
+import 'package:frontend/src/components/page.dart';
+import 'package:frontend/src/components/text.dart';
 
 var ooUrl = Uri.parse("https://www.github.com/dimitrivinet/omega-omnibus");
 

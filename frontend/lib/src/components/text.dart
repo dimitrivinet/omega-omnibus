@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
-import "../theme.dart" as theme;
+
+import "package:frontend/src/theme.dart" as theme;
 
 const Map<String, double> sizes = {
   "1": 56.0,

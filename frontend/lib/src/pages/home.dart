@@ -1,16 +1,8 @@
 import "package:flutter/material.dart";
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:frontend/src/colors.dart';
 
-import "../components/text.dart";
-
-var title = SvgPicture.asset(
-  "assets/title.svg",
-  semanticsLabel: "Omega Omnibus Title",
-  color: primaryLight,
-  alignment: Alignment.topLeft,
-  height: 100,
-);
+import "package:frontend/src/components/text.dart";
+import "package:frontend/src/components/title.dart" as title;
 
 class OOHome extends StatelessWidget {
   const OOHome({Key? key}) : super(key: key);
@@ -23,7 +15,7 @@ class OOHome extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(child: SizedBox(height: 100, child: title)),
+          Center(child: SizedBox(height: 100, child: title.title)),
           Container(
             padding: const EdgeInsets.only(left: 45),
             child: Column(

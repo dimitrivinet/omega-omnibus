@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
-import 'package:frontend/src/components/info_page.dart';
+
+import 'package:frontend/src/components/page.dart';
 import 'package:frontend/src/components/text.dart';
 
 class OOContactInfo extends StatelessWidget {
@@ -17,7 +18,7 @@ class OOContactInfo extends StatelessWidget {
     contactInfo?.forEach((key, value) {
       contactInfos.add(Column(
         children: [
-          OOSelectableText("$key $value", size: "6"),
+          OOSelectableText("$key: $value", size: "6"),
           const SizedBox(height: 3),
         ],
       ));
