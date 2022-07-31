@@ -4,9 +4,7 @@ import "package:frontend/src/colors.dart" as colors;
 import "package:frontend/src/components/page.dart";
 import "package:frontend/src/components/text.dart";
 import "package:frontend/src/components/title.dart" as title;
-import "package:frontend/src/theme.dart" as theme;
 
-import 'dart:developer';
 
 const int maxNumPlayers = 8;
 
