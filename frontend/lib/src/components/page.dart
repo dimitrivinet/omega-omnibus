@@ -12,6 +12,7 @@ class OOBasePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: colors.primaryDark,
       appBar: AppBar(
         shadowColor: colors.primaryDark,

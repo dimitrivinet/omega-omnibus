@@ -23,25 +23,25 @@ class OOHome extends StatelessWidget {
               children: [
                 const SizedBox(height: 100),
                 TextButton(
-                  child: OOText("New Game"),
+                  child: const OOText("New Game"),
                   onPressed: () => Navigator.pushNamed(context, '/new_game'),
                 ),
                 TextButton(
-                  child: OOText("History"),
+                  child: const OOText("History"),
                   onPressed: () => Navigator.pushNamed(context, '/history'),
                 ),
                 TextButton(
-                  child: OOText("Stats"),
+                  child: const OOText("Stats"),
                   onPressed: () => Navigator.pushNamed(context, '/stats'),
                 ),
                 const SizedBox(height: 110),
                 TextButton(
-                  child: OOText("About"),
+                  child: const OOText("About"),
                   onPressed: () => Navigator.pushNamed(context, '/about'),
                 ),
                 const SizedBox(height: 40),
                 TextButton(
-                  child: OOText("Contact"),
+                  child: const OOText("Contact"),
                   onPressed: () => Navigator.pushNamed(context, '/contact'),
                 ),
               ],

@@ -1,9 +1,5 @@
 assets/.old
 
-# build folders
-android
-web
-
 # Overrides
 !lib/
 

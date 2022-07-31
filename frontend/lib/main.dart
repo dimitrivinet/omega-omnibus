@@ -29,9 +29,9 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       routes: {
         "/": (context) => const home.OOHome(),
-        "/new_game": (context) => new_game.OONewGame(),
-        "/history": (context) => history.OOHistory(),
-        "/stats": (context) => stats.OOStats(),
+        "/new_game": (context) => const new_game.OONewGame(),
+        "/history": (context) => const history.OOHistory(),
+        "/stats": (context) => const stats.OOStats(),
         "/about": (context) => const about.OOAbout(),
         "/contact": (context) => const contact.OOContact(),
       },
