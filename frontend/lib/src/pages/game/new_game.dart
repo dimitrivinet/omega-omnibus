@@ -5,7 +5,6 @@ import "package:frontend/src/components/page.dart";
 import "package:frontend/src/components/text.dart";
 import "package:frontend/src/components/title.dart" as title;
 
-
 const int maxNumPlayers = 8;
 
 String capitalize(String s) =>
@@ -26,6 +25,8 @@ class _OONewGameState extends State<OONewGame> {
   late List<String> playerNames;
   late List<Widget> playerList;
   late List<Widget> playerListBase;
+
+  bool buttonsPresent = true;
 
   _OONewGameState() {
     currentText = "";
@@ -57,6 +58,8 @@ class _OONewGameState extends State<OONewGame> {
   void addButtons() {
     playerList.insert(0, addPlayerField);
     playerList.insert(1, addPlayerButton);
+
+    buttonsPresent = true;
   }
 
   void removeButtons() {
@@ -71,6 +74,8 @@ class _OONewGameState extends State<OONewGame> {
     for (var item in toRemove.reversed) {
       playerList.removeAt(item);
     }
+
+    buttonsPresent = false;
   }
 
   void addPlayer({String? text}) {
@@ -114,7 +119,7 @@ class _OONewGameState extends State<OONewGame> {
                   onPressed: () {
                     setState(() {
                       playerList.removeAt(index);
-                      if (playerList.length == maxNumPlayers - 1) {
+                      if (!buttonsPresent) {
                         addButtons();
                       }
                     });
